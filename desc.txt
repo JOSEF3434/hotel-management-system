@@ -1,0 +1,141 @@
+The Users API endpoints include:
+
+GET /api/v1/users - Get all users (admin only)
+GET /api/v1/users/:id - Get single user (admin only)
+POST /api/v1/users - Create new user (admin only)
+PUT /api/v1/users/:id - Update user (admin only)
+DELETE /api/v1/users/:id - Delete user (admin only)
+PUT /api/v1/users/:id/photo - Upload user photo
+GET /api/v1/users/stats - Get user statistics (admin only)
+PUT /api/v1/users/:id/deactivate - Deactivate user (admin only)
+PUT /api/v1/users/:id/reactivate - Reactivate user (admin only)
+GET /api/v1/users/:id/activity - Get user activity log (admin only)
+
+This implementation provides the following features:
+
+Room Management:
+Create, read, update, and delete rooms
+Upload multiple photos for each room
+Update room status
+Get available rooms based on date range and filters
+Get room statistics
+File Uploads:
+Handle single and multiple file uploads
+Validate file types and sizes
+Store files in organized directories
+Authentication & Authorization:
+Protect routes with JWT
+Role-based access control
+Admin and receptionist permissions
+API Endpoints:
+GET /api/v1/rooms - Get all rooms
+GET /api/v1/rooms/available - Get available rooms
+GET /api/v1/rooms/stats - Get room statistics
+GET /api/v1/rooms/:id - Get single room
+POST /api/v1/rooms - Create new room
+PUT /api/v1/rooms/:id - Update room
+DELETE /api/v1/rooms/:id - Delete room
+PUT /api/v1/rooms/:id/photos - Upload room photos
+PUT /api/v1/rooms/:id/status - Update room status
+
+This implementation provides a complete booking system with the following features:
+
+Booking Management:
+Create, read, update, and delete bookings
+Check-in and check-out functionality
+Booking cancellation with validation
+Date range queries
+Booking statistics
+Room Management:
+Automatic room status updates
+Availability checking
+Room capacity validation
+Payment Integration:
+Payment processing
+Receipt generation
+Payment status tracking
+Email Notifications:
+Booking confirmation
+Check-in/check-out notifications
+Cancellation confirmations
+API Endpoints:
+GET /api/v1/bookings - Get all bookings
+GET /api/v1/bookings/range - Get bookings by date range
+GET /api/v1/bookings/stats - Get booking statistics
+GET /api/v1/bookings/:id - Get single booking
+POST /api/v1/rooms/:roomId/bookings - Create new booking
+PUT /api/v1/bookings/:id - Update booking
+DELETE /api/v1/bookings/:id - Delete booking
+PUT /api/v1/bookings/:id/checkin - Check in guest
+PUT /api/v1/bookings/:id/checkout - Check out guest
+PUT /api/v1/bookings/:id/cancel - Cancel booking 
+
+
+This payment system implementation includes:
+
+Payment Processing:
+Support for multiple payment methods (cash, credit card, mobile money, etc.)
+Payment status tracking (pending, completed, failed, refunded)
+Automatic booking status updates
+Payment reference generation
+Webhook handling for payment processors
+Payment Management:
+Create, read, update, and delete payments
+Payment statistics and reporting
+Refund processing
+Partial payments support
+Email Notifications:
+Payment confirmations
+Payment failure notifications
+Refund confirmations
+Security:
+Payment verification
+Webhook signature validation
+Role-based access control
+API Endpoints:
+GET /api/v1/payments - Get all payments
+GET /api/v1/payments/stats - Get payment statistics
+GET /api/v1/payments/:id - Get single payment
+POST /api/v1/bookings/:bookingId/payments - Create new payment
+PUT /api/v1/payments/:id - Update payment
+DELETE /api/v1/payments/:id - Delete payment
+POST /api/v1/payments/webhook - Payment webhook handler
+To complete the setup, you'll need to:
+
+Configure your payment processor (e.g., Stripe, PayPal, etc.)
+Set up the webhook URL in your payment processor's dashboard
+Configure the necessary environment variables
+
+
+This implementation provides:
+
+Payment System with Ethiopian Integration:
+Chapa payment gateway integration
+TeleBirr mobile money support
+CBE (Commercial Bank of Ethiopia) integration
+Awash Bank integration
+Cash payment handling
+Webhook support for payment verification
+Housekeeping Management System:
+Task creation and management
+Room cleaning status tracking
+Staff assignment and scheduling
+Priority-based task management
+Performance tracking
+Reporting and statistics
+API Endpoints: Payments:
+GET /api/v1/payments/methods - Get supported payment methods
+POST /api/v1/bookings/:bookingId/payments/process - Process payment
+GET /api/v1/payments/verify/:paymentId - Verify payment
+Webhook endpoints for payment providers
+Housekeeping:
+GET /api/v1/housekeeping - Get all tasks
+GET /api/v1/housekeeping/status/:status - Get tasks by status
+GET /api/v1/housekeeping/stats - Get housekeeping statistics
+GET /api/v1/housekeeping/schedule - Get housekeeping schedule
+POST /api/v1/housekeeping - Create task
+PUT /api/v1/housekeeping/:id - Update task
+PUT /api/v1/housekeeping/:id/assign - Assign task to staff
+PUT /api/v1/housekeeping/:id/complete - Mark task as complete
+DELETE /api/v1/housekeeping/:id - Delete task
+
