@@ -20,6 +20,7 @@ const NODE_ENV = process.env.NODE_ENV || 'development';
 
 // Connect to database
 connectDB();
+console.log("MONGO_URI =", process.env.MONGO_URI);
 
 // Initialize Express app
 const app = express();

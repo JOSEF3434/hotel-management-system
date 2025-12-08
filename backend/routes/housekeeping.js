@@ -1,6 +1,6 @@
 // File: routes/housekeeping.js
 const express = require('express');
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 const {
   getHousekeepingTasks,
   getHousekeepingTask,
@@ -17,12 +17,6 @@ const {
 const { protect, authorize } = require('../middleware/auth');
 const advancedResults = require('../middleware/advancedResults');
 const Housekeeping = require('../models/Housekeeping');
-
-// Re-route into other resource routers
-const roomRouter = require('./rooms');
-
-// Re-route to room housekeeping tasks
-router.use('/rooms/:roomId/housekeeping', roomRouter);
 
 // All routes are protected
 router.use(protect);

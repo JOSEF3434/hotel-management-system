@@ -1,15 +1,17 @@
 // File: routes/auth.js
 const express = require('express');
-const router = express.Router();
 const {
   register,
   login,
   getMe,
+  forgotPassword,
+  resetPassword,
   updateDetails,
   updatePassword,
-  forgotPassword,
-  resetPassword
+  logout
 } = require('../controllers/auth');
+
+const router = express.Router();
 
 const { protect } = require('../middleware/auth');
 
@@ -20,5 +22,6 @@ router.put('/updatedetails', protect, updateDetails);
 router.put('/updatepassword', protect, updatePassword);
 router.post('/forgotpassword', forgotPassword);
 router.put('/resetpassword/:resettoken', resetPassword);
+router.get('/logout', logout);
 
 module.exports = router;

@@ -1,7 +1,8 @@
+// File: controllers/auth.js
 const User = require('../models/User');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
-const { sendEmail } = require('../utils/email');
+const {sendEmail} = require('../utils/email');
 const crypto = require('crypto');
 
 // @desc    Register user
@@ -122,9 +123,9 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
 
   try {
     await sendEmail({
-      to: user.email,
+      email: user.email,
       subject: 'Password reset token',
-      text: message
+      message
     });
 
     res.status(200).json({ success: true, data: 'Email sent' });

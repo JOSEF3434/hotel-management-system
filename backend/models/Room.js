@@ -44,8 +44,18 @@ const RoomSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['available', 'occupied', 'maintenance', 'cleaning', 'reserved'],
+    enum: ['available', 'occupied', 'maintenance', 'cleaning'],
     default: 'available'
+  },
+  averageRating: {
+    type: Number,
+    min: [1, 'Rating must be at least 1'],
+    max: [5, 'Rating cannot be more than 5'],
+    set: val => Math.round(val * 10) / 10 // Rounds to 1 decimal place
+  },
+  numberOfReviews: {
+    type: Number,
+    default: 0
   },
   floor: {
     type: Number,
