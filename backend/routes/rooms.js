@@ -19,12 +19,10 @@ const Room = require('../models/Room');
 
 // Re-route into other resource routers
 const bookingRouter = require('./bookings');
-const reviewRouter = require('./reviews');
 const housekeepingRouter = require('./housekeeping');
 
 // Re-route to other resource routers
 router.use('/:roomId/bookings', bookingRouter);
-router.use('/:roomId/reviews', reviewRouter);
 router.use('/:roomId/housekeeping', housekeepingRouter);
 
 router

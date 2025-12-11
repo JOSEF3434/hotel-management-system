@@ -1,28 +1,46 @@
 const nodemailer = require('nodemailer');
 const logger = require('./logger');
 
-// Create a transporter object using the default SMTP transport
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || 'smtp.gmail.com', // Use Gmail as default
-  port: process.env.SMTP_PORT || 587,
-  secure: false, // true for 465, false for other ports
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASSWORD,
-  },
-  tls: {
-    rejectUnauthorized: false, // For self-signed certificates
-  },
-});
+// Create a transporter object
+let transporter;
+const hasSmtpConfig =
+  !!process.env.SMTP_HOST && !!process.env.SMTP_USER && !!process.env.SMTP_PASSWORD;
+
+if (hasSmtpConfig) {
+  transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: Number(process.env.SMTP_PORT) || 587,
+    secure: process.env.SMTP_SECURE === 'true',
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASSWORD,
+    },
+    tls: {
+      rejectUnauthorized: false,
+    },
+  });
+} else {
+  // Fallback to a dev-friendly transport that doesn't require network access
+  transporter = nodemailer.createTransport({
+    streamTransport: true,
+    newline: 'unix',
+    buffer: true,
+  });
+  logger.warn(
+    'SMTP is not configured. Using stream transport; emails will be output to logs.'
+  );
+}
 
 // Verify connection configuration
-transporter.verify((error, success) => {
-  if (error) {
-    logger.error('SMTP connection error:', error);
-  } else {
-    logger.info('Server is ready to take our messages');
-  }
-});
+if (hasSmtpConfig) {
+  transporter.verify((error) => {
+    if (error) {
+      logger.error('SMTP connection error:', error);
+    } else {
+      logger.info('SMTP server is ready to take messages');
+    }
+  });
+}
 
 /**
  * Send an email

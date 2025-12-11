@@ -5,7 +5,6 @@ const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const rateLimit = require('express-rate-limit');
-const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const path = require('path');
@@ -91,8 +90,8 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// Prevent http param pollution
-app.use(hpp());
+// Prevent http param pollution (disabled due to incompatibility with req.query getter)
+// app.use(hpp());
 
 // Set static folder
 app.use(express.static(path.join(__dirname, 'public')));
