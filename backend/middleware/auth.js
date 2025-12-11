@@ -22,8 +22,19 @@ exports.protect = async (req, res, next) => {
 
     try {
         // Verify token
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'devsecret');
+
+        // Dev fallback: when DB is not configured, use token payload as user
+        if (!process.env.MONGO_URI) {
+            req.user = {
+                id: decoded.id,
+                name: decoded.name,
+                email: decoded.email,
+                role: decoded.role || 'guest'
+            };
+            return next();
+        }
+
         // Get user from the token
         req.user = await User.findById(decoded.id).select('-password');
         next();

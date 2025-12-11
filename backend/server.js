@@ -25,10 +25,19 @@ console.log("MONGO_URI =", process.env.MONGO_URI);
 const app = express();
 const server = http.createServer(app);
 
+// Allowed frontend origins (dev and production)
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  'http://localhost:3000',
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'http://localhost:5175'
+].filter(Boolean);
+
 // Initialize Socket.io
 const io = socketio(server, {
   cors: {
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    origin: allowedOrigins,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true
   }
@@ -68,11 +77,18 @@ if (NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-// Enable CORS
+// Enable CORS (allow local dev ports and configured origin)
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin) || /^http:\/\/localhost:\d+$/.test(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error('Not allowed by CORS'));
+  },
   credentials: true
 }));
+
 
 // Sanitize data
 app.use(mongoSanitize());
@@ -80,8 +96,8 @@ app.use(mongoSanitize());
 // Set security headers
 app.use(helmet());
 
-// Prevent XSS attacks
-app.use(xss());
+// Prevent XSS attacks (temporarily disabled due to req.query setter issue)
+// app.use(xss());
 
 // Rate limiting
 const limiter = rateLimit({

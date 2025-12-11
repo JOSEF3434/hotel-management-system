@@ -3,6 +3,7 @@ const User = require('../models/User');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const {sendEmail} = require('../utils/email');
+const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 
 // @desc    Register user
@@ -11,7 +12,18 @@ const crypto = require('crypto');
 exports.register = asyncHandler(async (req, res, next) => {
   const { name, email, password, role } = req.body;
 
-  // Create user
+  // Dev fallback: if DB is not configured, issue a token without persisting
+  if (!process.env.MONGO_URI) {
+    const devUser = {
+      id: `dev-${Date.now()}`,
+      name,
+      email,
+      role: role || 'guest'
+    };
+    return sendTokenResponse(devUser, 200, res);
+  }
+
+  // Create user (requires DB)
   const user = await User.create({
     name,
     email,
@@ -54,6 +66,19 @@ exports.login = asyncHandler(async (req, res, next) => {
 // @route   GET /api/v1/auth/me
 // @access  Private
 exports.getMe = asyncHandler(async (req, res, next) => {
+  // Dev fallback: return payload from token when DB is not configured
+  if (!process.env.MONGO_URI) {
+    return res.status(200).json({
+      success: true,
+      data: {
+        id: req.user.id,
+        name: req.user.name,
+        email: req.user.email,
+        role: req.user.role || 'guest'
+      }
+    });
+  }
+
   const user = await User.findById(req.user.id);
 
   res.status(200).json({
@@ -185,12 +210,23 @@ exports.logout = asyncHandler(async (req, res, next) => {
 
 // Get token from model, create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {
-  // Create token
-  const token = user.getSignedJwtToken();
+  // Create token: use model method if available, otherwise sign from payload
+  let token;
+  if (user && typeof user.getSignedJwtToken === 'function') {
+    token = user.getSignedJwtToken();
+  } else {
+    const payload = {
+      id: user._id?.toString?.() || user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role || 'guest'
+    };
+    token = jwt.sign(payload, process.env.JWT_SECRET || 'devsecret', { expiresIn: '30d' });
+  }
 
   const options = {
     expires: new Date(
-      Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000
+      Date.now() + (Number(process.env.JWT_COOKIE_EXPIRE || 7) * 24 * 60 * 60 * 1000)
     ),
     httpOnly: true
   };
