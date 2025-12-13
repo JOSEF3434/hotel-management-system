@@ -34,10 +34,13 @@ const allowedOrigins = [
   'http://localhost:5175'
 ].filter(Boolean);
 
+// Trust proxy for hosted environments (Render/Heroku)
+app.set('trust proxy', 1);
+
 // Initialize Socket.io
 const io = socketio(server, {
   cors: {
-    origin: allowedOrigins,
+    origin: (origin, callback) => callback(null, true),
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true
   }
@@ -79,14 +82,10 @@ if (NODE_ENV === 'development') {
 
 // Enable CORS (allow local dev ports and configured origin)
 app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin) || /^http:\/\/localhost:\d+$/.test(origin)) {
-      return callback(null, true);
-    }
-    return callback(new Error('Not allowed by CORS'));
-  },
-  credentials: true
+  origin: (origin, callback) => callback(null, true),
+  credentials: true,
+  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 

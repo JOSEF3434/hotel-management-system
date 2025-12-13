@@ -1,6 +1,11 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const isLocalhost = typeof window !== 'undefined' && window.location.hostname === 'localhost';
+const isRender = typeof window !== 'undefined' && window.location.hostname.endsWith('onrender.com');
+
+const API_URL =
+  import.meta.env.VITE_API_URL ||
+  (isRender ? 'https://jj-hms-backend.onrender.com/api' : 'http://localhost:5000/api');
 
 const axiosInstance = axios.create({
   baseURL: API_URL,
